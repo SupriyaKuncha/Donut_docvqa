@@ -1,4 +1,3 @@
-# frontend/streamlit_app.py
 
 import streamlit as st
 import requests
@@ -17,8 +16,6 @@ st.title("📄 Invoice Data Extractor (Donut DocVQA)")
 st.markdown("Upload an invoice image and get key information extracted automatically.")
 
 # --- Backend API Endpoint ---
-# Confirm this URL and port with your backend team.
-# Based on your provided image, FastAPI is running on http://127.0.0.1:8000
 FASTAPI_BACKEND_URL = "http://127.0.0.1:8000"
 
 # --- UI Elements ---
