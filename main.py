@@ -12,10 +12,9 @@ app = FastAPI()
 origins = [
     "http://localhost",          # Allows requests from 'http://localhost' directly (e.g., if you opened index.html directly)
     "http://localhost:8000",     # Allows requests from your backend's own specific address
-    "http://localhost:8501",     # <<< This is crucial for your Streamlit frontend
-    # Add any other origins here if you plan to deploy your frontend to a different domain/IP later,
-    # for example: "https://your-production-frontend.com"
+    "http://localhost:8501",     # This is crucial for your Streamlit frontend
 ]
+
 # Add the CORS middleware to your FastAPI application.
 app.add_middleware(
     CORSMiddleware,
@@ -28,23 +27,22 @@ app.add_middleware(
 @app.post("/process_invoice")
 async def process_invoice(file: UploadFile = File(...)):
     try:
-        # 1. Receive Image: Read the uploaded file contents
+        # Receive Image: Read the uploaded file contents
         contents = await file.read() 
         image = Image.open(io.BytesIO(contents)).convert("RGB") # Open the image using Pillow (PIL) and convert to RGB
 
-        # 2. Prepare Image and Prompts:
+        # Prepare Image and Prompts:
         pixel_values = process_image(image) # Preprocess image using Donut processor
         prompts = prepare_prompts()  # Get the list of questions (prompts)
         
-        # 3. Process Each Field:
+        # Process Each Field:
         results = {}
         for field, prompt in prompts.items():
             decoded = generate_output(pixel_values, prompt)  # Generate output (answer) for each specific question
-            results[field] = clean_generated_text(decoded, processor) # Clean the generated text (using the utils.py function)
+            results[field] = clean_generated_text(decoded, processor) 
         
-        # 4. Return Results: Return a JSON response with all extracted fields
+        # Return Results: Return a JSON response with all extracted field
         return JSONResponse(content=results)
     
-    # Handle any exceptions (errors) during the process
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
